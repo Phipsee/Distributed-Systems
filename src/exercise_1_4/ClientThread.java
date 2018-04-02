@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import utils.DistributedUtils;
 
@@ -55,13 +57,39 @@ public class ClientThread extends Thread {
 
 	private void executeCommand(String s) {
 		if (DistributedUtils.isStringEmptyOrNull(s)) {
-			writeToStream("Command unknown");
+			writeError();
 		}
-		if (s.toLowerCase().contains("radius ")) {
+		if (s.toLowerCase().contains(Commands.PERIMETER.command)) {
 			Double r = parseDouble(s);
-			if (s != null) {
+			if (r != null) {
 				writeToStream("radius is " + calcCirclePerimeter(r));
 			}
+		} else if (s.toLowerCase().contains(Commands.PRIME_NUMBERS.command)) {
+			Integer n = parseInteger(s);
+			if (n == null) {
+				return;
+			}
+			List<Integer> primes = new ArrayList<>();
+			for (int i = 1; i <= n; i++) {
+				if (DistributedUtils.getAmountDivisors(i) <= 2) {
+					primes.add(i);
+				}
+			}
+			writeToStream(primes.toString());
+		} else if (s.toLowerCase().contains(Commands.ROOT.command)) {
+			Integer n = parseInteger(s);
+			if (n == null) {
+				return;
+			}
+			writeToStream("root of " + n + " is: " + Math.sqrt(n));
+		} else if (s.toLowerCase().contains(Commands.OPERATIONS.command)) {
+			writeToStream("Commands are " + Commands.allToString());
+		} else if (s.toLowerCase().contains(Commands.INFO.command)) {
+			writeToStream("Serveraddress is " + socket.getLocalSocketAddress().toString());
+		}
+
+		else {
+			writeError();
 		}
 
 	}
@@ -77,6 +105,41 @@ public class ClientThread extends Thread {
 			writeToStream("No valid number found");
 			return null;
 		}
+	}
+
+	private Integer parseInteger(String s) {
+		try {
+			return Integer.parseInt(s.replace("prime ", "").replace("root ", "").replace(" ", ""));
+		} catch (NumberFormatException e) {
+			writeToStream("No valid number found");
+			return null;
+		}
+	}
+
+	public enum Commands {
+		PERIMETER("radius "), ROOT("root "), INFO("info"), PRIME_NUMBERS("prime "), OPERATIONS("operation"),;
+		private String command;
+
+		private Commands(String s) {
+			command = s;
+		}
+
+		public String getCommand() {
+			return command;
+		}
+
+		public static String allToString() {
+			StringBuilder stb = new StringBuilder();
+			for (Commands c : Commands.values()) {
+				stb.append(c.getCommand() + " ");
+			}
+			return stb.toString();
+		}
+
+	}
+
+	private void writeError() {
+		writeToStream("Command unknown");
 	}
 
 }

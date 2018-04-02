@@ -1,5 +1,7 @@
 package exercise_1_1;
 
+import utils.DistributedUtils;
+
 public class CalcThread implements Runnable, Comparable<CalcThread> {
 
 	private int divisors;
@@ -34,13 +36,7 @@ public class CalcThread implements Runnable, Comparable<CalcThread> {
 	}
 
 	protected int calculateAmountDivisors(int number) {
-		int amountDivisors = 0;
-		for (int n = 1; n <= number; n++) {
-			if (number % n == 0) {
-				amountDivisors++;
-			}
-		}
-		return amountDivisors;
+		return DistributedUtils.getAmountDivisors(number);
 	}
 
 	public int getDivisors() {
