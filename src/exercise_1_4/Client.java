@@ -25,7 +25,7 @@ public class Client {
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Connection to host lost");
 		}
 	}
 
