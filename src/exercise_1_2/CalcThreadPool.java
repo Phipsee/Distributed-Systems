@@ -48,7 +48,7 @@ public class CalcThreadPool {
 	}
 
 	public static void fillList() {
-		for (int i = 0; i <= NUMBER; i++) {
+		for (int i = 1; i <= NUMBER; i++) {
 			tasks.add(i);
 		}
 	}

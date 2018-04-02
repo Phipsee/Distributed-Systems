@@ -8,7 +8,7 @@ public class CalcThreadWorker extends CalcThread {
 
 	private ConcurrentLinkedQueue<Integer> tasks;
 
-	private CalcThreadWorker(ConcurrentLinkedQueue<Integer> tasks) {
+	protected CalcThreadWorker(ConcurrentLinkedQueue<Integer> tasks) {
 		this.tasks = tasks;
 	}
 
@@ -27,5 +27,9 @@ public class CalcThreadWorker extends CalcThread {
 	
 	public static CalcThreadWorker getInstance(ConcurrentLinkedQueue<Integer> tasks) {
 		return new CalcThreadWorker(tasks);
+	}
+
+	public ConcurrentLinkedQueue<Integer> getTasks() {
+		return tasks;
 	}
 }
