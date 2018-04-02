@@ -48,7 +48,7 @@ public class ClientThread extends Thread{
 	}
 	
 	public void writeToStream(String msg) {
-			out.print(msg);
+			out.println(msg);
 	}
 
 }
