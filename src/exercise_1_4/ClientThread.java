@@ -6,28 +6,30 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ClientThread extends Thread{
+import utils.DistributedUtils;
+
+public class ClientThread extends Thread {
 
 	private Socket socket;
 	private BufferedReader in;
 	private PrintWriter out;
-	
+
 	private ClientThread(Socket socket) throws IOException {
 		this.socket = socket;
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(socket.getOutputStream(), true);
 	}
-	
+
 	@Override
 	public void run() {
 		String input;
-		while(socket.isConnected()) {
-			
-			if((input = readFromInput()) != "") {
-				System.out.println(input);
+		while (socket.isConnected()) {
+			if ((input = readFromInput()) != null) {
+				executeCommand(input);
 			}
 		}
 	}
+
 	public static ClientThread getInstance(Socket socket) {
 		try {
 			return new ClientThread(socket);
@@ -36,19 +38,45 @@ public class ClientThread extends Thread{
 		}
 		return null;
 	}
-	
+
 	private String readFromInput() {
 		try {
 			String s = in.readLine();
-			return s != null ? s:"";
+			return s != null ? s : "";
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return "";
 	}
-	
+
 	public void writeToStream(String msg) {
-			out.println(msg);
+		out.println(msg);
+	}
+
+	private void executeCommand(String s) {
+		if (DistributedUtils.isStringEmptyOrNull(s)) {
+			writeToStream("Command unknown");
+		}
+		if (s.toLowerCase().contains("radius ")) {
+			Double r = parseDouble(s);
+			if (s != null) {
+				writeToStream("radius is " + calcCirclePerimeter(r));
+			}
+		}
+
+	}
+
+	private Double calcCirclePerimeter(double n) {
+		return n * Math.PI;
+	}
+
+	private Double parseDouble(String s) {
+		try {
+			return Double.parseDouble(s.replace("radius", "").replace(" ", ""));
+		} catch (NumberFormatException e) {
+			writeToStream("No valid number found");
+			return null;
+		}
 	}
 
 }

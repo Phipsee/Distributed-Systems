@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client {
 
@@ -18,14 +17,14 @@ public class Client {
 			String input;
 			
 			while (socket.isConnected()) {
+				System.out.println(in.readLine());
+				
 				if ((input = stdIn.readLine()) != null) {
 					out.println(input);
 				}
-				System.out.println(in.readLine());
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
