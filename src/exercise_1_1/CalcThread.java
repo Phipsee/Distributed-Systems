@@ -1,17 +1,13 @@
 package exercise_1_1;
 
-import java.util.HashMap;
-
 public class CalcThread implements Runnable, Comparable<CalcThread> {
 
 	private int divisors;
-	private int highestNumberWithMostDivisors;
 	private int endNumber;
 	private int startNumber;
-	HashMap<Integer, Integer> d;
+	private int highestNumberWithMostDivisors;
 
-	private CalcThread(int number) {
-		this.endNumber = number;
+	protected CalcThread() {
 	}
 
 	private CalcThread(int startNumber, int endNumber) {
@@ -20,33 +16,47 @@ public class CalcThread implements Runnable, Comparable<CalcThread> {
 	}
 
 	public void run() {
-		System.out.println("Start Thread "+ Thread.currentThread().getId());
+		System.out.println("Start Thread " + Thread.currentThread().getId());
 		divide();
-		System.out.println("End Thread "+ Thread.currentThread().getId());
+		System.out.println("End Thread " + Thread.currentThread().getId());
 	}
 
 	private void divide() {
-		int amountDivisors = 0;
+		int amountDivisors;
 		for (int actualNumber = startNumber == 0 ? 1 : startNumber; actualNumber <= endNumber; actualNumber++) {
-			for (int n = 1; n <= actualNumber; n++) {
-				if (actualNumber % n == 0) {
-					amountDivisors++;
-				}
-			}
+			amountDivisors = calculateAmountDivisors(actualNumber);
 			if (amountDivisors > divisors) {
-				highestNumberWithMostDivisors = actualNumber;
-				divisors = amountDivisors;
+				setNumberWithMostDivisors(actualNumber);
+				setDivisors(amountDivisors);
+
 			}
-			amountDivisors = 0;
 		}
+	}
+
+	protected int calculateAmountDivisors(int number) {
+		int amountDivisors = 0;
+		for (int n = 1; n <= number; n++) {
+			if (number % n == 0) {
+				amountDivisors++;
+			}
+		}
+		return amountDivisors;
 	}
 
 	public int getDivisors() {
 		return divisors;
 	}
 
+	protected void setDivisors(int n) {
+		divisors = n;
+	}
+
 	public int getNumberWithMostDivisors() {
 		return highestNumberWithMostDivisors;
+	}
+
+	protected void setNumberWithMostDivisors(int n) {
+		highestNumberWithMostDivisors = n;
 	}
 
 	public int getNumber() {
@@ -64,7 +74,7 @@ public class CalcThread implements Runnable, Comparable<CalcThread> {
 
 	@Override
 	public int compareTo(CalcThread o) {
-		if(o.highestNumberWithMostDivisors == this.highestNumberWithMostDivisors) {
+		if (o.highestNumberWithMostDivisors == this.highestNumberWithMostDivisors) {
 			return 0;
 		}
 		return o.highestNumberWithMostDivisors > this.highestNumberWithMostDivisors ? -1 : 1;

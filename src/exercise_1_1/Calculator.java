@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 
-public class Main {
+public class Calculator {
 
 	private static int THREAD_AMOUNT = 15;
 	private static int NUMBER = 100000;
