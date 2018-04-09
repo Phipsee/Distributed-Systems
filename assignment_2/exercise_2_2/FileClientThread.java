@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -34,8 +35,10 @@ public class FileClientThread extends Thread {
 
 	@Override
 	public void run() {
+		System.out.println("Connected");
 		String input;
-		out.println("Commands are: \n list \n get <file>");
+		out.println("Commands are: list, get <file>");
+		out.flush();
 		while (socket.isConnected()) {
 			input = readLine();
 			doSomething(getCommand(input));
@@ -60,6 +63,7 @@ public class FileClientThread extends Thread {
 	private Command getCommand(String input) {
 		for (Command c : Command.values()) {
 			if (input.startsWith(c.getValue())) {
+				command = input;
 				return c;
 			}
 		}
@@ -70,16 +74,25 @@ public class FileClientThread extends Thread {
 		switch (cmd) {
 		case LIST:
 			for (String f : dir.list()) {
-				out.write(f);
+				out.print(f + " ,");
 			}
+			out.println();
+			out.flush();
 			break;
 
 		case GET:
-			String filename = dir.getName() + command.replace(Command.GET.value, "");
+			String filename = dir.getAbsolutePath() + "/" + command.replace(Command.GET.value, "");
 			System.out.println(filename);
 			try {
-				Files.copy(new File(filename).toPath(), socket.getOutputStream());
+				File toSend = new File(filename);
+				out.println("file incoming " + toSend.length());
+				out.flush();
+				Files.copy(toSend.toPath(), socket.getOutputStream());
 				socket.getOutputStream().flush();
+
+				out.println(toSend.getName());
+				out.flush();
+				System.out.println("Finished sending file");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
