@@ -18,9 +18,9 @@ public class CalcThread implements Runnable, Comparable<CalcThread> {
 	}
 
 	public void run() {
-		System.out.println("Start Thread " + Thread.currentThread().getId());
+		//System.out.println("Start Thread " + Thread.currentThread().getId());
 		divide();
-		System.out.println("End Thread " + Thread.currentThread().getId());
+		//System.out.println("End Thread " + Thread.currentThread().getId());
 	}
 
 	private void divide() {

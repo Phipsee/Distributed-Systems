@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CalcThreadPool {
 
-	private static int THREAD_AMOUNT = 15;
+	private static int THREAD_AMOUNT = 10;
 	private static int NUMBER = 100000;
 	private static ConcurrentLinkedQueue<Integer> tasks;
 	private static List<CalcThreadWorker> threads;

@@ -22,7 +22,6 @@ public class Consumer {
 		producers = createThreads();
 
 		startThreads();
-
 		while (results.size() < NUMBER) {
 			sleep();
 		}

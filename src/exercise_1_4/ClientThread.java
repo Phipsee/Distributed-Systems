@@ -117,7 +117,7 @@ public class ClientThread extends Thread {
 	}
 
 	public enum Commands {
-		PERIMETER("radius "), ROOT("root "), INFO("info"), PRIME_NUMBERS("prime "), OPERATIONS("operation"),;
+		PERIMETER("radius "), ROOT("root "), INFO("info"), PRIME_NUMBERS("prime "), OPERATIONS("operation");
 		private String command;
 
 		private Commands(String s) {

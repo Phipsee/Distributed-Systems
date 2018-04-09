@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Calculator {
 
-	private static int THREAD_AMOUNT = 15;
+	private static int THREAD_AMOUNT = 1;
 	private static int NUMBER = 100000;
 
 	public static void main(String[] args) {
