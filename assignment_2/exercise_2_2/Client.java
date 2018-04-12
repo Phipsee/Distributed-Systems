@@ -1,6 +1,7 @@
 package exercise_2_2;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,9 +9,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -28,7 +26,7 @@ public class Client {
 		Integer port = Integer.parseInt(scn.nextLine());
 
 		try {
-			 socket = new Socket("192.168.1.109", port);
+			 socket = new Socket("192.168.1.104", port);
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 
@@ -37,7 +35,7 @@ public class Client {
 				System.out.println("server: " + input);
 				
 				if (input.startsWith("file incoming")) {
-					downloadFile();
+					downloadFile(input);
 				}
 				
 				writeLine();
@@ -59,11 +57,21 @@ public class Client {
 		return new Client();
 	}
 	
-	public void downloadFile() throws IOException, InterruptedException {
+	public void downloadFile(String s) throws IOException, InterruptedException {
 		File nf = new File("recieved" + new Date().getTime());
-		System.out.println( Files.copy(socket.getInputStream(), nf.toPath(),StandardCopyOption.REPLACE_EXISTING));
+
+		int size = Integer.parseInt(s.replace("file incoming ", ""));
+		byte [] buffer = new byte[size];
+		DataInputStream dataIn = new DataInputStream(socket.getInputStream());
+		dataIn.readFully(buffer, 0, size);
+
+		FileOutputStream fos = new FileOutputStream(nf);
+		fos.write(buffer);
+		fos.flush();
+		fos.close();
+		
 		System.out.println("Finished downloading file");
-		System.out.println(nf.renameTo(new File(in.readLine())));
+		nf.renameTo(new File(in.readLine()));
 	}
 
 }
