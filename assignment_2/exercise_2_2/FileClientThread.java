@@ -49,7 +49,8 @@ public class FileClientThread extends Thread {
 		try {
 			return in.readLine();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Client disconnected");
+			Thread.currentThread().interrupted();
 		}
 		return "ERROR";
 	}
