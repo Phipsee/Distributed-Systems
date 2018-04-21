@@ -26,7 +26,7 @@ public class Client {
 		Integer port = Integer.parseInt(scn.nextLine());
 
 		try {
-			 socket = new Socket("192.168.1.104", port);
+			 socket = new Socket("localhost", port);
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 

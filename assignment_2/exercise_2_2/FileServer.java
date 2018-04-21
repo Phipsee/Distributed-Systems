@@ -66,6 +66,9 @@ public class FileServer extends Thread {
 		System.out.println("not a valid directory");
 		return null;
 	}
-
+	
+	public static void main(String[] args) {
+		FileServer.startServer();
+	}
 	
 }
