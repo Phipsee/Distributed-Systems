@@ -18,31 +18,43 @@ public class RoomManagerImpl extends UnicastRemoteObject implements RoomManager 
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void checkAvailability(int arrivalDay, int departureDay) throws RemoteException {
+	public String checkAvailability(int arrivalDay, int departureDay) throws RemoteException {
+		StringBuilder strb = new StringBuilder();
+
 		for (List<Room> l : rooms) {
 			for (Room r : l) {
 				if (r.isAvailable(arrivalDay, departureDay)) {
-					System.out.println(
-							"Room: Type: " + r.getRoomType() + " Price: " + r.getPrice() * (departureDay - arrivalDay));
+					strb.append("Room: Type: " + r.getRoomType() + " Price: "
+							+ r.getPrice() * (departureDay - arrivalDay) + "\n");
 				}
 			}
 		}
+		return strb.toString();
 	}
 
 	@Override
-	public void book(int roomType, int arrivalDay, int departureDay, String guest) throws RemoteException {
+	public String book(int roomType, int arrivalDay, int departureDay, String guest) throws RemoteException {
 		for (Room r : rooms.get(roomType)) {
 			if (r.isAvailable(arrivalDay, departureDay)) {
 				r.bookRoom(arrivalDay, departureDay, guest);
-				return;
+				return "room booked";
 			}
 		}
-		System.out.println("Sorry thi room type is not available");
-		checkAvailability(arrivalDay, departureDay);
+		return checkAvailability(arrivalDay, departureDay);
 	}
 
 	@Override
-	public void summary() throws RemoteException {
+	public String summary() throws RemoteException {
+		StringBuilder strb = new StringBuilder();
+		
+		for(List<Room> l : rooms) {
+			for(Room r : l) {
+					for(Reservation re : r.reservation) {
+						strb.append("Roomtype: "+r.getRoomType()+": "+re.toString()+"\n"+" Price: "+(r.getPrice()*(re.depart-re.arrival)));
+				}
+			}
+		}
+		return strb.toString();
 	}
 
 	private void initRooms() {

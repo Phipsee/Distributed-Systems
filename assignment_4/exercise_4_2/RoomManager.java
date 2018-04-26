@@ -5,9 +5,9 @@ import java.rmi.RemoteException;
 
 public interface RoomManager extends Remote {
 
-	public void checkAvailability(int arrivalDay, int departureDay) throws RemoteException;
+	public String checkAvailability(int arrivalDay, int departureDay) throws RemoteException;
 
-	public void book(int roomType, int arrivalDay, int departureDay, String guests) throws RemoteException;
+	public String book(int roomType, int arrivalDay, int departureDay, String guests) throws RemoteException;
 
-	public void summary() throws RemoteException;
+	public String summary() throws RemoteException;
 }

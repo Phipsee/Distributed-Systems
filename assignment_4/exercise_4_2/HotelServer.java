@@ -17,8 +17,8 @@ public class HotelServer extends Thread{
 			UnicastRemoteObject.unexportObject(roomManager, true);
 			RoomManager stub = (RoomManager) UnicastRemoteObject.exportObject(roomManager, 0);
 			
-			Registry registry = LocateRegistry.getRegistry();
-			registry.rebind("Roommanager", stub);
+			Registry registry = LocateRegistry.createRegistry(3434);
+			registry.rebind("RoomManager", stub);
 			
 			System.out.println("Server is ready");
 		} catch (RemoteException e) {
