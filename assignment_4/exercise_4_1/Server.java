@@ -21,19 +21,7 @@ public class Server {
 
 		Registry registry = LocateRegistry.createRegistry(3434);
 
-		boolean found = false;
-		for (String name : registry.list()) {
-			if (name.equals(calcName)) {
-				found = true;
-				break;
-			}
-		}
-
-		if (found) {
-			registry.unbind(calcName);
-		}
-
-		registry.bind(calcName, new Calc(n));
+		registry.rebind(calcName, new Calc(n));
 	}
 
 }
