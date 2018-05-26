@@ -17,4 +17,6 @@ public interface Peer extends Remote{
 	public Peer setRightNeighbour(Peer right) throws RemoteException;
 	
 	public void countPeers( List<Long> ids) throws RemoteException;
+	
+	public void leave() throws RemoteException;
 }

@@ -97,7 +97,7 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 		return rightPeer;
 	}
 	
-	private static Peer getInstance() {
+	public static Peer getInstance() {
 		if(myPeer == null) {
 			try {
 				myPeer = new PeerImpl();
@@ -133,5 +133,11 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 		}
 		ids.add(getId());
 		getLeftNeighbour().countPeers(ids);
+	}
+
+	@Override
+	public void leave() throws RemoteException {
+		getLeftNeighbour().setRightNeighbour(getRightNeighbour());
+		getRightNeighbour().setLeftNeighbour(getLeftNeighbour());
 	}
 }
