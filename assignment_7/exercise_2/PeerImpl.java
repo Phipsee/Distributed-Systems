@@ -43,7 +43,6 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 			stub.setRightNeighbour(stub);
 			System.out.println("NOW I AM THE SUPERPEER");
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
