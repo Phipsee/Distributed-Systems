@@ -1,5 +1,6 @@
 package exercise_2;
 
+import java.net.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -9,18 +10,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class PeerImpl extends UnicastRemoteObject implements Peer {
+public class PeerImpl extends UnicastRemoteObject implements Peer, Runnable {
 
 	protected PeerImpl() throws RemoteException {
 	}
-	
+
 	public static Peer myPeer;
-	
+
 	private Peer leftPeer;
 	private Peer rightPeer;
 	public Long id;
-	
-	
+
 	private static final long serialVersionUID = -2093316910639547613L;
 
 	public static void main(String[] args) {
@@ -46,7 +46,7 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public Peer getLeftNeighbour() throws RemoteException {
 		return leftPeer;
@@ -65,23 +65,25 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 			registry = LocateRegistry.getRegistry(3434);
 
 			Peer stub = (Peer) registry.lookup("Peer");
-			
+
 			Peer oldLeft = stub.getLeftNeighbour();
 			stub.setLeftNeighbour(getInstance());
 			getInstance().setLeftNeighbour(oldLeft);
 			getInstance().setRightNeighbour(stub);
 			oldLeft.setRightNeighbour(getInstance());
-			
-			System.out.println("To my left"+getLeftNeighbour());
-			System.out.println("To my right"+getRightNeighbour());
-			
+
+			System.out.println("To my left" + getLeftNeighbour());
+			System.out.println("To my right" + getRightNeighbour());
+
 			List<Long> ids = new ArrayList<>();
 			countPeers(ids);
-		}catch (RemoteException | NotBoundException e) {
+		} catch (RemoteException | NotBoundException e) {
 			System.out.println("No superPeer found");
 			beTheSuperPeer();
 		}
-	return null;
+		Thread t = new Thread(this);
+		t.start();
+		return this;
 	}
 
 	@Override
@@ -95,9 +97,9 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 		rightPeer = right;
 		return rightPeer;
 	}
-	
+
 	public static Peer getInstance() {
-		if(myPeer == null) {
+		if (myPeer == null) {
 			try {
 				myPeer = new PeerImpl();
 				myPeer.setId(new Date().getTime());
@@ -118,16 +120,16 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 		this.id = id;
 		return this.id;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Peer - "+getId();
+		return "Peer - " + getId();
 	}
 
 	@Override
 	public void countPeers(List<Long> ids) throws RemoteException {
-		if(ids.contains(getId())) {
-			System.out.println("Nodes in network: "+ids.size());
+		if (ids.contains(getId())) {
+			System.out.println("Nodes in network: " + ids.size());
 			return;
 		}
 		ids.add(getId());
@@ -138,5 +140,49 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 	public void leave() throws RemoteException {
 		getLeftNeighbour().setRightNeighbour(getRightNeighbour());
 		getRightNeighbour().setLeftNeighbour(getLeftNeighbour());
+	}
+
+	public void failureControl() throws RemoteException {
+		try {
+			getRightNeighbour().getId();
+		} catch (RemoteException e) {
+			setRightNeighbour(correctError(false));
+			return;
+		}
+		try {
+			getLeftNeighbour().getId();
+		} catch (RemoteException e) {
+			setLeftNeighbour(correctError(true));
+		}
+	}
+
+	public Peer correctError(boolean left) throws RemoteException {
+		if (left) {
+			try {
+				getRightNeighbour().getId();
+			} catch (RemoteException e) {
+				return this;
+			}
+			return getRightNeighbour().correctError(left);
+		}
+
+		try {
+			getLeftNeighbour().getId();
+		} catch (RemoteException e) {
+			return this;
+		}
+		return getLeftNeighbour().correctError(left);
+	}
+
+	@Override
+	public void run() {
+		while (true) {
+			try {
+				failureControl();
+				Thread.currentThread().sleep(1000);
+			} catch (InterruptedException | RemoteException e) {
+				System.out.println("Error thread error");
+			}
+		}
 	}
 }

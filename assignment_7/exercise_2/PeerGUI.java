@@ -31,7 +31,7 @@ public class PeerGUI extends JFrame {
 					PeerGUI frame = new PeerGUI();
 					frame.setVisible(true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.out.println("Error on init");
 				}
 			}
 		});
@@ -43,8 +43,7 @@ public class PeerGUI extends JFrame {
 			rightPeerTxt.setText("" + PeerImpl.getInstance().getRightNeighbour().getId());
 			peerId.setText("" + PeerImpl.getInstance().getId());
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error on update");
 		}
 	}
 
@@ -135,7 +134,7 @@ public class PeerGUI extends JFrame {
 					PeerImpl.getInstance().join();
 					update();
 				} catch (RemoteException e) {
-					e.printStackTrace();
+					System.out.println("Error on joining");
 				}
 
 			}
@@ -152,7 +151,7 @@ public class PeerGUI extends JFrame {
 				try {
 					PeerImpl.getInstance().leave();
 				} catch (RemoteException e1) {
-					e1.printStackTrace();
+					System.out.println("Error on leaving");
 				}
 			}
 		});

@@ -23,4 +23,6 @@ public interface Peer extends Remote {
 	public void countPeers(List<Long> ids) throws RemoteException;
 
 	public void leave() throws RemoteException;
+	
+	public Peer correctError(boolean left) throws RemoteException;
 }
